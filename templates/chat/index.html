@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Chat{% endblock %}
+{% block content %}
+<h2>Selamat datang, {{ current_user.email }} 👋</h2>
+
+<p><strong>🎭 Mode saat ini:</strong> {{ role_prompts.get(session.get('role', 'default'))['label'] }}</p>
+
+<form method="POST" action="/set-role">
+    <label for="role">🔧 Pilih peran chatbot:</label>
+    <select name="role" onchange="this.form.submit()">
+        {% for key, value in role_prompts.items() %}
+            <option value="{{ key }}" {% if session.get('role') == key %}selected{% endif %}>
+                {{ value['label'] }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<div style="margin: 10px 0;">
+    <a href="/download">📥 Download Histori</a> |
+    <a href="/logout">Logout</a>
+</div>
+
+<div id="chatbox">
+    {% for msg in history %}
+        <div class="user"><strong>Kamu:</strong> {{ msg.user_text }}</div>
+        <div class="bot"><strong>Bot:</strong> {{ msg.bot_reply }}</div>
+    {% endfor %}
+</div>
+
+<div class="chat-input">
+    <input type="text" id="message" placeholder="Tulis pesan..." autocomplete="off">
+    <button onclick="sendMessage()">Kirim</button>
+</div>
+{% endblock %}
